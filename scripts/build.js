@@ -17,36 +17,26 @@ createBuilder(
     bundle: true,
     treeShaking: true,
   },
-  [
-    {
-      name: 'server',
-      options: {
-        platform: 'node',
-        target: ['node22'],
-        format: 'cjs',
-        dropLabels: [...dropLabels, '$CLIENT'],
-      },
-    },
-    {
-      name: 'client',
-      options: {
-        platform: 'browser',
-        target: ['es2021'], 
-        format: 'iife',
-        dropLabels: [...dropLabels, '$SERVER'],
-      },
-    },
-  ],
+  [],
   async (outfiles) => {
     const files = await getFiles('dist/web', 'static', 'locales');
     await createFxmanifest({
-      client_scripts: [outfiles.client],
-      server_scripts: [outfiles.server],
+      client_scripts: [
+        "src/modules/*.shared.lua",
+        "src/modules/*.client.lua",
+        "src/core/shared.lua",
+        "src/core/client.lua"
+      ],
+      server_scripts: [
+        "src/modules/*.shared.lua",
+        "src/modules/*.server.lua",
+        "src/core/shared.lua",
+        "src/core/server.lua"
+      ],
       files: ['lib/init.lua', 'lib/client/**.lua', 'locales/*.json', ...files],
       dependencies: ['/server:13068', '/onesync'],
       metadata: {
         ui_page: 'dist/web/index.html',
-        node_version: '22'
       },
     });
 
